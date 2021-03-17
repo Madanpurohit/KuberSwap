@@ -21,6 +21,9 @@ contract Wallet is Ownable{
         balances[msg.sender][_ticker]=balances[msg.sender][_ticker].add(_ammount);
 
     }
+    function depositEth() payable external {
+        balances[msg.sender][bytes32("ETH")] = balances[msg.sender][bytes32("ETH")].add(msg.value);
+    }
     function withdraw(uint ammount,bytes32 ticker) external{
         require(tokenMapping[ticker].tokenAddress!=address(0),"token is not listed");
         require(balances[msg.sender][ticker]>=ammount,"balance is not sufficient");

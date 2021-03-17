@@ -17,13 +17,13 @@ contract("Dex",accounts=>{
         let dex=await Dex.deployed();
         let link=await Link.deployed();
         await truffleAssert.reverts(
-            dex.createLimitOrder(0,web3.utils.fromUtf8(link.symbol()),10,1)
+            dex.createLimitOrder(1,web3.utils.fromUtf8(link.symbol()),10,1)
         );
         await link.approve(dex.address,500);
         await dex.addToken(web3.utils.fromUtf8(link.symbol()),link.address,{from:accounts[0]});
         await dex.Deposit(web3.utils.fromUtf8(link.symbol()),10);
         await truffleAssert.passes(
-            dex.createLimitOrder(0,web3.utils.fromUtf8(link.symbol()),10,1) 
+            dex.createLimitOrder(1,web3.utils.fromUtf8(link.symbol()),10,1) 
         );
     });
 
@@ -36,8 +36,10 @@ contract("Dex",accounts=>{
         await dex.createLimitOrder(0,web3.utils.fromUtf8(link.symbol()),1,100);
         await dex.createLimitOrder(0,web3.utils.fromUtf8(link.symbol()),1,200);
         let orderBook=await dex.getOrderBook(web3.utils.fromUtf8(link.symbol()),0);
+        //console.log(orderBook);
+        assert(orderBook.length>0);
         for(let i=0;i<orderBook.length-1;i++){
-            assert(orderBook[i]>=orderBook[i+1],"not right order in buy book");
+            assert(orderBook[i].price>=orderBook[i+1].price,"not right order in buy book");
         }
 
     });
@@ -47,12 +49,14 @@ contract("Dex",accounts=>{
         let link=await Link.deployed();
         await link.approve(dex.address,500);
         await dex.depositEth({value:3000});
-        await dex.createLimitOrder(0,web3.utils.fromUtf8(link.symbol()),1,300);
-        await dex.createLimitOrder(0,web3.utils.fromUtf8(link.symbol()),1,100);
-        await dex.createLimitOrder(0,web3.utils.fromUtf8(link.symbol()),1,200);
+        await dex.createLimitOrder(1,web3.utils.fromUtf8(link.symbol()),1,300);
+        await dex.createLimitOrder(1,web3.utils.fromUtf8(link.symbol()),1,100);
+        await dex.createLimitOrder(1,web3.utils.fromUtf8(link.symbol()),1,200);
         let orderBook=await dex.getOrderBook(web3.utils.fromUtf8(link.symbol()),1);
+        assert(orderBook.length>0)
+        //console.log(orderBook);
         for(let i=0;i<orderBook.length-1;i++){
-            assert(orderBook[i]<=orderBook[i+1],"not right order in sell book");
+            assert(orderBook[i].price<=orderBook[i+1].price,"not right order in sell book");
         }
 
     });
