@@ -1,7 +1,7 @@
 const Link = artifacts.require("Link");
 const Dex = artifacts.require("Dex");
 const truffleAssert = require('truffle-assertions');
-contract.skip("Dex", accounts => {
+contract("Dex", accounts => {
     it("should only be possible for owner to send the tokens", async () => {
         let dex = await Dex.deployed();
         let link = await Link.deployed();

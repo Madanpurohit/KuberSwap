@@ -15,7 +15,7 @@ contract Wallet is Ownable{
         tokenMapping[_ticker]=Token(_ticker,_tokenAddress);
         tokenList.push(_ticker);
     }
-    function Deposit(bytes32 _ticker,uint256 _ammount) onlyOwner external{
+    function Deposit(bytes32 _ticker,uint256 _ammount) external{
         require(tokenMapping[_ticker].tokenAddress!=address(0),"token is not listed");
         IERC20(tokenMapping[_ticker].tokenAddress).transferFrom(msg.sender, address(this), _ammount);
         balances[msg.sender][_ticker]=balances[msg.sender][_ticker].add(_ammount);
